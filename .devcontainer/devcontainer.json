@@ -1,0 +1,21 @@
+{
+  "name": "FastAPI Dev",
+  "dockerComposeFile": ["../docker/docker-compose.yml"],
+  "service": "api",
+  "workspaceFolder": "/workspace",
+  "customizations": {
+    "vscode": {
+        "extensions": [
+            "ms-python.python",
+            "ms-python.vscode-pylance"
+        ]
+    },
+    "settings": {
+                "editor.formatOnSave": true,
+                "editor.formatOnSaveMode": "file",
+                "[python]": {
+                    "editor.defaultFormatter": "ms-python.black-formatter"
+                }
+                }
+  }
+}
