@@ -1,12 +1,11 @@
-version: "3.9"
+version: '3'
 
 services:
-  api:
+  httpd:
     build:
       context: ..
-      dockerfile: docker/Dockerfile
+      dockerfile: .devcontainer/Dockerfile
     volumes:
       - ..:/workspace
-    env_file:
-      - ../backend/.env
+
     command: /bin/sh -c "while sleep 1000; do :; done"

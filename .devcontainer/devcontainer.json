@@ -1,21 +1,39 @@
 {
-  "name": "FastAPI Dev",
-  "dockerComposeFile": ["../docker/docker-compose.yml"],
-  "service": "api",
-  "workspaceFolder": "/workspace",
-  "customizations": {
-    "vscode": {
-        "extensions": [
-            "ms-python.python",
-            "ms-python.vscode-pylance"
-        ]
-    },
-    "settings": {
+    "dockerComposeFile": "docker-compose.yml",
+    "workspaceFolder": "/workspace",
+    "service": "httpd",
+    "remoteUser": "vscode",
+
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-python.python",
+                "ms-python.vscode-pylance",
+                "ms-python.black-formatter",
+                "GitHub.vscode-pull-request-github",
+                "angular.ng-template",
+                "matthewpi.caddyfile-support",
+                "dbaeumer.vscode-eslint",
+                "esbenp.prettier-vscode"
+            ],
+            "settings": {
                 "editor.formatOnSave": true,
                 "editor.formatOnSaveMode": "file",
                 "[python]": {
                     "editor.defaultFormatter": "ms-python.black-formatter"
+                },
+                "python.analysis.extraPaths": [
+                    "/backend/"
+                ],
+                "python.testing.pytestEnabled": true,
+                "python.testing.unittestEnabled": false,
+                "python.analysis.diagnosticSeverityOverrides": {
+                    "reportMissingParameterType": "error",
+                    "reportGeneralTypeIssues": "error",
+                    "reportDeprecated": "error",
+                    "reportImportCycles": "error"
                 }
-                }
-  }
+            }
+        }
+    }
 }
