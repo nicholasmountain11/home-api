@@ -18,4 +18,5 @@ def test_service(service: ConnectionService = Depends()):
 
 @app.post("/listen_for_sensors")
 def listen_for_sensors(service: ConnectionService = Depends()):
-    service.receive()
+    message = service.receive()
+    return {"Message": message}
