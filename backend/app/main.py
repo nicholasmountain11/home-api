@@ -14,3 +14,8 @@ def read_root():
 def test_service(service: ConnectionService = Depends()):
     message = service.message()
     return {"Message": f"{message}"}
+
+
+@app.post("/listen_for_sensors")
+def listen_for_sensors(service: ConnectionService = Depends()):
+    service.receive()
