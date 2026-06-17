@@ -1,6 +1,6 @@
 from fastapi import Depends, FastAPI
 
-from app.services.connection import ConnectionService
+from backend.app.services.sensor import SensorService
 
 app = FastAPI()
 
@@ -11,12 +11,12 @@ def read_root():
 
 
 @app.get("/service_test")
-def test_service(service: ConnectionService = Depends()):
+def test_service(service: SensorService = Depends()):
     message = service.message()
     return {"Message": f"{message}"}
 
 
 @app.post("/listen_for_sensors")
-def listen_for_sensors(service: ConnectionService = Depends()):
+def listen_for_sensors(service: SensorService = Depends()):
     message = service.receive()
     return {"Message": message}
