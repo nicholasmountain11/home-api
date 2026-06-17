@@ -3,7 +3,7 @@ import threading
 from typing import Any
 
 
-class ConnectionService:
+class SensorService:
 
     def __init__(self, port: int):
         self.port = port
@@ -14,7 +14,7 @@ class ConnectionService:
         print("Listening")
 
     def message(self) -> str:
-        return "Hello from service"
+        return "Hello from sensor service"
 
     def handle(self, client: Any):
         """Wait for messages from client. Broadcast all messages, and close connection on client error"""
