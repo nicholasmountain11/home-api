@@ -10,7 +10,7 @@ class Connection_Type(Enum):
     ACTUATOR = auto()
 
 
-class SensorService:
+class ConnectionService:
 
     DUPE_MSG = "DUPE"
 
@@ -25,7 +25,7 @@ class SensorService:
         sensor_listener_thread.start()
         print(f"Listening for sensors on port {sensor_port}")
 
-    def handle(self, client: Any):
+    def handle_sensor(self, client: Any):
         """Wait for messages from client. Broadcast all messages, and close connection on client error"""
         print("new thread, waiting for client message")
         q = queue.Queue(maxsize=5)
@@ -71,9 +71,9 @@ class SensorService:
             # create thread in correct handle function based on connection type
             # TODO implement actuator handle function
             ct = (
-                threading.Thread(target=self.handle, args=(client,))
+                threading.Thread(target=self.handle_sensor, args=(client,))
                 if connection_type is Connection_Type.SENSOR
-                else threading.Thread(target=self.handle, args=(client,))
+                else threading.Thread(target=self.handle_sensor, args=(client,))
             )
             ct.start()
 
