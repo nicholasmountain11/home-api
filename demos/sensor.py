@@ -23,6 +23,9 @@ if nickname == confirmation:
             print(e)
             client.close()
             break
+elif confirmation == "DUPE":
+    print("that nickname is already in use")
+    client.close()
 
 else:
     print("incorrect nickname confirmation")

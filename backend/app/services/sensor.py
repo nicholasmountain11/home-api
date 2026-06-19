@@ -6,6 +6,8 @@ from typing import Any
 
 class SensorService:
 
+    DUPE_MSG = "DUPE"
+
     def __init__(self, port: int):
         self.registry = {}
         self.port = port
@@ -25,6 +27,10 @@ class SensorService:
             print(nickname)
             if nickname == "":
                 raise RuntimeError("failed to get nickname")
+            if nickname in self.registry:
+                print("duplicate nickname")
+                client.send(self.DUPE_MSG.encode("ascii"))
+                raise RuntimeError("duplicate nickname")
             # send confirmation of nickname
             sent = client.send(nickname.encode("ascii"))
             if sent == 0:
@@ -41,6 +47,7 @@ class SensorService:
         # if error with client occurs, close connection with client
         except:
             client.close()
+            self.registry.pop(nickname)
             print("connection closed")
 
     def accept(self) -> str:
