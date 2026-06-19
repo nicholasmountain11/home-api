@@ -6,15 +6,12 @@ from typing import Any
 class SensorService:
 
     def __init__(self, port: int):
+        self.registry = {}
         self.port = port
         self.host = "127.0.0.1"  # localhost
-        self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.server.bind((self.host, port))
-        self.server.listen()
-        print("Listening")
-
-    def message(self) -> str:
-        return "Hello from sensor service"
+        listener_thread = threading.Thread(target=self.accept)
+        listener_thread.start()
+        print(f"Listening on port {port}")
 
     def handle(self, client: Any):
         """Wait for messages from client. Broadcast all messages, and close connection on client error"""
@@ -30,21 +27,36 @@ class SensorService:
                 print("connection closed")
                 break
 
-    def receive(self):
-        """Wait for new connections"""
+    def accept(self) -> str:
+        server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        server.bind((self.host, self.port))
+        server.listen(5)
+        print("Listening")
         while True:
-            try:
-                client, address = self.server.accept()
-                print(f"Connected with {str(address)}")
+            client, address = server.accept()
+            print(f"Connected with {str(address)}")
+            ct = threading.Thread(target=self.handle, args=(client,))
+            ct.start()
 
-                nickname = client.recv(1024).decode("ascii")
+    def message(self) -> str:
+        return "Hello from sensor service"
 
-                print(f"Sensor nickname is: {nickname}!")
+    # def receive(self):
+    #     """Wait for new connections"""
+    #     while True:
+    #         try:
+    #             client, address = self.server.accept()
+    #             print(f"Connected with {str(address)}")
 
-                thread = threading.Thread(target=self.handle, args=(client,))
-                thread.start()
-                return f"Listening on port {self.port}"
+    #             nickname = client.recv(1024).decode("ascii")
 
-            except Exception as e:
-                print(e)
-                client.close()
+    #             print(f"Sensor nickname is: {nickname}!")
+
+    #             thread = threading.Thread(target=self.handle, args=(client,))
+    #             thread.start()
+    #             return f"Listening on port {self.port}"
+
+    #         except Exception as e:
+    #             print(e)
+    #             client.close()
