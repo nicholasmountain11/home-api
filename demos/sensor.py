@@ -10,10 +10,20 @@ def write():
         client.send(message.encode("ascii"))
 
 
-while True:
-    try:
-        write()
-    except Exception as e:
-        print(e)
-        client.close()
-        break
+nickname = input("Enter sensor nickname: ")
+client.send(nickname.encode("ascii"))
+confirmation = client.recv(1024).decode()
+print(confirmation)
+
+if nickname == confirmation:
+    while True:
+        try:
+            write()
+        except Exception as e:
+            print(e)
+            client.close()
+            break
+
+else:
+    print("incorrect nickname confirmation")
+    client.close()
