@@ -69,22 +69,3 @@ class SensorService:
 
     def message(self) -> str:
         return "Hello from sensor service"
-
-    # def receive(self):
-    #     """Wait for new connections"""
-    #     while True:
-    #         try:
-    #             client, address = self.server.accept()
-    #             print(f"Connected with {str(address)}")
-
-    #             nickname = client.recv(1024).decode("ascii")
-
-    #             print(f"Sensor nickname is: {nickname}!")
-
-    #             thread = threading.Thread(target=self.handle, args=(client,))
-    #             thread.start()
-    #             return f"Listening on port {self.port}"
-
-    #         except Exception as e:
-    #             print(e)
-    #             client.close()
