@@ -36,3 +36,9 @@ def test_service(service: SensorService = Depends()):
 def listen_for_sensors(service: SensorService = Depends()):
     message = service.receive()
     return {"Message": message}
+
+
+@app.get("/get_sensor_message/{nickname}")
+def get_sensor_message(nickname: str):
+    message = sensor_service.get_message(nickname=nickname)
+    return {"Message": message}
