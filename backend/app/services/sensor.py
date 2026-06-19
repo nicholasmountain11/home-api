@@ -18,30 +18,30 @@ class SensorService:
         """Wait for messages from client. Broadcast all messages, and close connection on client error"""
         print("new thread, waiting for client message")
         q = queue.Queue(maxsize=5)
-        while True:
-            # try to receive message from client
-            try:
-                # receive nickname to identify sensor connection
-                nickname = client.recv(1024).decode()
-                print(nickname)
-                if nickname == b"":
-                    raise RuntimeError("failed to get nickname")
-                # send confirmation of nickname
-                sent = client.send(nickname.encode("ascii"))
-                if sent == 0:
-                    raise RuntimeError("socket connection broken")
-                # add sensor to registry
-                self.registry[nickname] = (client, q)
+
+        try:
+            # receive nickname to identify sensor connection
+            nickname = client.recv(1024).decode()
+            print(nickname)
+            if nickname == b"":
+                raise RuntimeError("failed to get nickname")
+            # send confirmation of nickname
+            sent = client.send(nickname.encode("ascii"))
+            if sent == 0:
+                raise RuntimeError("socket connection broken")
+            # add sensor to registry
+            self.registry[nickname] = (client, q)
+            while True:
                 # wait for message
-                message = client.recv(1024)
+                message = client.recv(1024).decode()
                 if message == b"":
                     raise RuntimeError("socket connection broken")
+                q.put(message)
                 print(message)
-            # if error with client occurs, close connection with client
-            except:
-                client.close()
-                print("connection closed")
-                break
+        # if error with client occurs, close connection with client
+        except:
+            client.close()
+            print("connection closed")
 
     def accept(self) -> str:
         server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -54,6 +54,11 @@ class SensorService:
             print(f"Connected with {str(address)}")
             ct = threading.Thread(target=self.handle, args=(client,))
             ct.start()
+
+    def get_message(self, nickname: str):
+        message = self.registry[nickname][1].get()
+        print(f"got message: {message}")
+        return message
 
     def message(self) -> str:
         return "Hello from sensor service"
