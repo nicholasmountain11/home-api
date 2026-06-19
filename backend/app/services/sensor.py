@@ -20,6 +20,8 @@ class SensorService:
             # try to receive message from client
             try:
                 message = client.recv(1024)
+                if message == b"":
+                    raise RuntimeError("socket connection broken")
                 print(message)
             # if error with client occurs, close connection with client
             except:
