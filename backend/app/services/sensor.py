@@ -23,7 +23,7 @@ class SensorService:
             # receive nickname to identify sensor connection
             nickname = client.recv(1024).decode()
             print(nickname)
-            if nickname == b"":
+            if nickname == "":
                 raise RuntimeError("failed to get nickname")
             # send confirmation of nickname
             sent = client.send(nickname.encode("ascii"))
@@ -34,7 +34,7 @@ class SensorService:
             while True:
                 # wait for message
                 message = client.recv(1024).decode()
-                if message == b"":
+                if message == "":
                     raise RuntimeError("socket connection broken")
                 q.put(message)
                 print(message)
