@@ -13,7 +13,7 @@ actuator_service: ActuatorService
 async def lifespan(app: FastAPI):
     global sensor_service
     global actuator_service
-    sensor_service = SensorService(port=8001)
+    sensor_service = SensorService(sensor_port=8001, actuator_port=8002)
     actuator_service = ActuatorService(port=8002)
     yield
 
