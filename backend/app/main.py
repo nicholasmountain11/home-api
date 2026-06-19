@@ -1,8 +1,23 @@
+from contextlib import asynccontextmanager
+
 from fastapi import Depends, FastAPI
 
-from backend.app.services.sensor import SensorService
+from backend.app.services import SensorService, ActuatorService
 
-app = FastAPI()
+sensor_service: SensorService
+actuator_service: ActuatorService
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    global sensor_service
+    global actuator_service
+    sensor_service = SensorService(port=8001)
+    actuator_service = ActuatorService(port=8002)
+    yield
+
+
+app = FastAPI(lifespan=lifespan)
 
 
 @app.get("/")
