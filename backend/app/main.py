@@ -42,3 +42,9 @@ def listen_for_sensors(service: SensorService = Depends()):
 def get_sensor_message(nickname: str):
     message = sensor_service.get_message(nickname=nickname)
     return {"Message": message}
+
+
+@app.get("/list_sensors", response_model=list[str])
+def list_sensors() -> list[str]:
+    sensors = sensor_service.registry.keys()
+    return sensors
