@@ -2,7 +2,8 @@ from contextlib import asynccontextmanager
 
 from fastapi import Depends, FastAPI
 
-from backend.app.services import SensorService, ActuatorService
+from services.sensor import SensorService
+from services.actuator import ActuatorService
 
 sensor_service: SensorService
 actuator_service: ActuatorService
