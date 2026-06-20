@@ -32,3 +32,8 @@ def get_sensor_message(nickname: str):
 def list_sensors() -> list[str]:
     sensors = connection_service.registry.keys()
     return sensors
+
+
+@app.post("/send_message/{nickname}")
+def send_actuator_message(nickname: str, message: str):
+    connection_service.send_message(nickname=nickname, message=message)
