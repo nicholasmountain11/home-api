@@ -37,3 +37,9 @@ def list_sensors() -> list[str]:
 @app.post("/send_message/{nickname}")
 def send_actuator_message(nickname: str, message: str):
     connection_service.send_message(nickname=nickname, message=message)
+
+
+@app.get("/list_actuators", response_model=list[str])
+def list_actuators() -> list[str]:
+    actuators = connection_service.actuator_registry.keys()
+    return actuators
