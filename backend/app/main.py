@@ -30,8 +30,7 @@ def get_sensor_message(nickname: str):
 
 @app.get("/list_sensors", response_model=list[str])
 def list_sensors() -> list[str]:
-    sensors = connection_service.registry.keys()
-    return sensors
+    return connection_service.get_sensor_nickname_list()
 
 
 @app.post("/send_message/{nickname}")
@@ -41,5 +40,4 @@ def send_actuator_message(nickname: str, message: str):
 
 @app.get("/list_actuators", response_model=list[str])
 def list_actuators() -> list[str]:
-    actuators = connection_service.registry.keys()
-    return actuators
+    return connection_service.get_actuator_nickname_list()

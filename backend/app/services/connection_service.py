@@ -126,5 +126,25 @@ class ConnectionService:
         self.registry[nickname].add_to_q(message=message)
         print(f"added message to actuator queue")
 
+    def get_sensor_nickname_list(self) -> list[str]:
+        nicknames: list[str] = []
+        for (
+            key,
+            value,
+        ) in self.registry.items():
+            if value.connection_type is ConnectionType.SENSOR:
+                nicknames.append(key)
+        return nicknames
+
+    def get_actuator_nickname_list(self) -> list[str]:
+        nicknames: list[str] = []
+        for (
+            key,
+            value,
+        ) in self.registry.items():
+            if value.connection_type is ConnectionType.ACTUATOR:
+                nicknames.append(key)
+        return nicknames
+
     def message(self) -> str:
         return "Hello from sensor service"
