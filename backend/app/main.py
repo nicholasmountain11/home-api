@@ -2,7 +2,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import Depends, FastAPI
 
-from services.connection import ConnectionService
+from services.connection_service import ConnectionService
 
 sensor_service: ConnectionService
 

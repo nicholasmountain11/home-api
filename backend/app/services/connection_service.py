@@ -3,6 +3,7 @@ import threading
 import queue
 from typing import Any
 from enum import Enum, auto
+from models.connection import Connection
 
 
 class Connection_Type(Enum):
@@ -15,7 +16,7 @@ class ConnectionService:
     DUPE_MSG = "DUPE"
 
     def __init__(self, sensor_port: int, actuator_port: int):
-        self.registry = {}
+        self.registry: dict[str, Connection] = {}
         self.sensor_port = sensor_port
         self.actuator_port = actuator_port
         self.host = "127.0.0.1"  # localhost
@@ -46,7 +47,7 @@ class ConnectionService:
         if sent == 0:
             raise RuntimeError("socket connection broken")
         # add connection to registry
-        self.registry[nickname] = (client, queue.Queue(maxsize=5))
+        self.registry[nickname] = Connection(nickname=nickname, client=client)
         return nickname
 
     def handle_sensor(self, client: Any):
@@ -61,7 +62,7 @@ class ConnectionService:
                 message = client.recv(1024).decode()
                 if message == "":
                     raise RuntimeError("socket connection broken")
-                self.registry[nickname][1].put(message)
+                self.registry[nickname].add_to_q(message=message)
                 print(message)
         # if error with client occurs, close connection with client
         except:
@@ -78,7 +79,7 @@ class ConnectionService:
             nickname = self.handshake(client=client)
             while True:
                 # wait for message to send to client, get() blocks when no message is available
-                message = self.registry[nickname][1].get()
+                message = self.registry[nickname].get_from_q()
                 sent = client.send(message.encode("ascii"))
                 if sent == 0:
                     raise RuntimeError("socket connection broken")
@@ -116,12 +117,12 @@ class ConnectionService:
             ct.start()
 
     def get_message(self, nickname: str):
-        message = self.registry[nickname][1].get()
+        message = self.registry[nickname].get_from_q()
         print(f"got message: {message}")
         return message
 
     def send_message(self, nickname: str, message: str):
-        self.registry[nickname][1].put(message)
+        self.registry[nickname].add_to_q(message=message)
         print(f"added message to actuator queue")
 
     def message(self) -> str:
