@@ -1,6 +1,6 @@
 from contextlib import asynccontextmanager
 
-from fastapi import Depends, FastAPI
+from fastapi import Depends, FastAPI, HTTPException, status
 
 from services.connection_service import ConnectionService
 
@@ -35,7 +35,10 @@ def list_sensors() -> list[str]:
 
 @app.post("/send_message/{nickname}")
 def send_actuator_message(nickname: str, message: str):
-    connection_service.send_message(nickname=nickname, message=message)
+    try:
+        connection_service.send_message(nickname=nickname, message=message)
+    except Exception as e:
+        raise HTTPException(status_code=404, detail="Message could not be sent")
 
 
 @app.get("/list_actuators", response_model=list[str])

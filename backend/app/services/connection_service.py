@@ -81,11 +81,8 @@ class ConnectionService:
             while True:
                 # wait for message to send to client, get() blocks when no message is available
                 message = self.registry[nickname].get_from_q()
-                print("84")
                 message_text = message.message
-                print(f"86, {message_text}")
                 sent = client.send(message_text.encode("ascii"))
-                print("87")
                 if sent == 0:
                     raise RuntimeError("socket connection broken")
                 message.event.set()
@@ -133,12 +130,12 @@ class ConnectionService:
         message_with_event = Message(message=message, event=send_event)
         self.registry[nickname].add_to_q(message=message_with_event)
         print("here")
-        sent = send_event.wait()
+        sent = send_event.wait(timeout=5)
         print(f"sent returned: {sent}")
         if sent:
             print(f"added message to actuator queue")
         else:
-            print("failed to send message")
+            raise RuntimeError("Failed to send message")
 
     def get_sensor_nickname_list(self) -> list[str]:
         nicknames: list[str] = []

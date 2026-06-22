@@ -26,5 +26,5 @@ class Connection:
     def get_from_q(self):
         return self.q.get()
 
-    def add_to_q(self, message: Message) -> bool:
+    def add_to_q(self, message: Message):
         self.q.put(message)
