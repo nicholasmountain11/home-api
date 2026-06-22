@@ -24,7 +24,8 @@ class Connection:
         self.connection_type = connection_type
 
     def get_from_q(self):
-        return self.q.get()
+        message = self.q.get()
+        return message.message
 
     def add_to_q(self, message: str) -> bool:
         send_event = threading.Event()
