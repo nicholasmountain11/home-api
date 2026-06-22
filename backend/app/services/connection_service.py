@@ -61,7 +61,7 @@ class ConnectionService:
                 message = client.recv(1024).decode()
                 if message == "":
                     raise RuntimeError("socket connection broken")
-                self.registry[nickname].add_to_q(message=message)
+                self.registry[nickname].add_to_q(message=Message(message=message))
                 print(message)
         # if error with client occurs, close connection with client
         except:
@@ -80,9 +80,12 @@ class ConnectionService:
             )
             while True:
                 # wait for message to send to client, get() blocks when no message is available
-                message: Message = self.registry[nickname].get_from_q()
+                message = self.registry[nickname].get_from_q()
+                print("84")
                 message_text = message.message
+                print(f"86, {message_text}")
                 sent = client.send(message_text.encode("ascii"))
+                print("87")
                 if sent == 0:
                     raise RuntimeError("socket connection broken")
                 message.event.set()
@@ -121,11 +124,16 @@ class ConnectionService:
 
     def get_message(self, nickname: str):
         message = self.registry[nickname].get_from_q()
-        print(f"got message: {message}")
-        return message
+        message_text = message.message
+        print(f"got message: {message_text}")
+        return message_text
 
     def send_message(self, nickname: str, message: str):
-        sent = self.registry[nickname].add_to_q(message=message)
+        send_event = threading.Event()
+        message_with_event = Message(message=message, event=send_event)
+        self.registry[nickname].add_to_q(message=message_with_event)
+        print("here")
+        sent = send_event.wait()
         print(f"sent returned: {sent}")
         if sent:
             print(f"added message to actuator queue")
