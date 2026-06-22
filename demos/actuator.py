@@ -7,6 +7,8 @@ client.connect(("127.0.0.1", 8002))
 def receive():
     while True:
         message = client.recv(1024).decode()
+        if message == "":
+            raise RuntimeError("connection closed")
         print(f"message received: {message}")
 
 

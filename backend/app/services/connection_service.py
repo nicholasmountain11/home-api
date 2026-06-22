@@ -3,7 +3,7 @@ import threading
 import queue
 from typing import Any
 from enums.connection_type import ConnectionType
-from models.connection import Connection
+from models.connection import Connection, Message
 
 
 class ConnectionService:
@@ -80,10 +80,12 @@ class ConnectionService:
             )
             while True:
                 # wait for message to send to client, get() blocks when no message is available
-                message = self.registry[nickname].get_from_q()
-                sent = client.send(message.encode("ascii"))
+                message: Message = self.registry[nickname].get_from_q()
+                message_text = message.message
+                sent = client.send(message_text.encode("ascii"))
                 if sent == 0:
                     raise RuntimeError("socket connection broken")
+                message.event.set()
         # if error with client occurs, close connection with client
         except:
             client.close()
@@ -123,8 +125,12 @@ class ConnectionService:
         return message
 
     def send_message(self, nickname: str, message: str):
-        self.registry[nickname].add_to_q(message=message)
-        print(f"added message to actuator queue")
+        sent = self.registry[nickname].add_to_q(message=message)
+        print(f"sent returned: {sent}")
+        if sent:
+            print(f"added message to actuator queue")
+        else:
+            print("failed to send message")
 
     def get_sensor_nickname_list(self) -> list[str]:
         nicknames: list[str] = []
