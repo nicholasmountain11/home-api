@@ -24,8 +24,11 @@ def read_root():
 
 @app.get("/get_sensor_message/{nickname}")
 def get_sensor_message(nickname: str):
-    message = connection_service.get_message(nickname=nickname)
-    return {"Message": message}
+    try:
+        message = connection_service.get_message(nickname=nickname)
+        return {"Message": message}
+    except KeyError as e:
+        raise HTTPException(status_code=404, detail=f"Missing key: {e}")
 
 
 @app.get("/list_sensors", response_model=list[str])
