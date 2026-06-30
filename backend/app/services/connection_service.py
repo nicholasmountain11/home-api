@@ -50,7 +50,7 @@ class ConnectionService:
     def handle_sensor(self, client: Any):
         """Wait for messages from client. Broadcast all messages, and close connection on client error"""
         print("new sensor thread, waiting for client message")
-
+        nickname = None
         try:
             # receive nickname to identify sensor connection
             nickname = self.handshake(
@@ -64,15 +64,17 @@ class ConnectionService:
                 self.registry[nickname].add_to_q(message=Message(message=message))
                 print(message)
         # if error with client occurs, close connection with client
-        except:
+        except Exception as e:
+            print(f"sensor error: {e}")
             client.close()
-            self.registry.pop(nickname)
+            if nickname and nickname in self.registry:
+                self.registry.pop(nickname)
             print("connection closed")
 
     def handle_actuator(self, client: Any):
         """Send messages to client. Close connection on client error"""
         print("new actuator thread, waiting for messsages to send")
-
+        nickname = None
         try:
             # receive nickname to identify actuator connection
             nickname = self.handshake(
@@ -87,9 +89,11 @@ class ConnectionService:
                     raise RuntimeError("socket connection broken")
                 message.event.set()
         # if error with client occurs, close connection with client
-        except:
+        except Exception as e:
+            print(f"actuator error: {e}")
             client.close()
-            self.registry.pop(nickname)
+            if nickname and nickname in self.registry:
+                self.registry.pop(nickname)
             print("connection closed")
 
     def accept(self, connection_type: ConnectionType):
@@ -119,8 +123,13 @@ class ConnectionService:
             )
             ct.start()
 
-    def get_message(self, nickname: str):
-        message = self.registry[nickname].get_from_q()
+    def get_message(self, nickname: str, timeout: float = 5.0):
+        try:
+            message = self.registry[nickname].get_from_q(timeout=timeout)
+        except queue.Empty:
+            raise TimeoutError(
+                f"No message received from '{nickname}' within {timeout}s"
+            )
         message_text = message.message
         print(f"got message: {message_text}")
         return message_text

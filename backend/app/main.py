@@ -26,24 +26,35 @@ def read_root():
 def get_sensor_message(nickname: str):
     try:
         message = connection_service.get_message(nickname=nickname)
-        return {"Message": message}
-    except KeyError as e:
-        raise HTTPException(status_code=404, detail=f"Missing key: {e}")
+        return {"message": message}
+    except KeyError:
+        raise HTTPException(status_code=404, detail=f"Sensor '{nickname}' not found")
+    except TimeoutError as e:
+        raise HTTPException(status_code=408, detail=str(e))
 
 
 @app.get("/list_sensors", response_model=list[str])
 def list_sensors() -> list[str]:
-    return connection_service.get_sensor_nickname_list()
+    try:
+        return connection_service.get_sensor_nickname_list()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @app.post("/send_message/{nickname}")
 def send_actuator_message(nickname: str, message: str):
     try:
         connection_service.send_message(nickname=nickname, message=message)
-    except Exception as e:
-        raise HTTPException(status_code=404, detail="Message could not be sent")
+        return {"status": "sent"}
+    except KeyError:
+        raise HTTPException(status_code=404, detail=f"Actuator '{nickname}' not found")
+    except RuntimeError as e:
+        raise HTTPException(status_code=503, detail=str(e))
 
 
 @app.get("/list_actuators", response_model=list[str])
 def list_actuators() -> list[str]:
-    return connection_service.get_actuator_nickname_list()
+    try:
+        return connection_service.get_actuator_nickname_list()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

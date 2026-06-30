@@ -23,8 +23,8 @@ class Connection:
         self.q = queue.Queue()
         self.connection_type = connection_type
 
-    def get_from_q(self):
-        return self.q.get()
+    def get_from_q(self, timeout: float | None = None):
+        return self.q.get(timeout=timeout)
 
     def add_to_q(self, message: Message):
         self.q.put(message)
