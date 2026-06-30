@@ -10,11 +10,11 @@ class ConnectionService:
 
     DUPE_MSG = "DUPE"
 
-    def __init__(self, sensor_port: int, actuator_port: int):
+    def __init__(self, sensor_port: int, actuator_port: int, host_ip: str):
         self.registry: dict[str, Connection] = {}
         self.sensor_port = sensor_port
         self.actuator_port = actuator_port
-        self.host = "127.0.0.1"  # localhost
+        self.host = host_ip
         sensor_listener_thread = threading.Thread(
             target=self.accept, args=(ConnectionType.SENSOR,)
         )

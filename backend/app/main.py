@@ -4,13 +4,24 @@ from fastapi import Depends, FastAPI, HTTPException, status
 
 from services.connection_service import ConnectionService
 
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
 sensor_service: ConnectionService
+
+SENSOR_PORT = int(os.environ["SENSOR_PORT"])
+ACTUATOR_PORT = int(os.environ["ACTUATOR_PORT"])
+HOST_IP = os.environ["LOCAL_HOST"]
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     global connection_service
-    connection_service = ConnectionService(sensor_port=8001, actuator_port=8002)
+    connection_service = ConnectionService(
+        sensor_port=SENSOR_PORT, actuator_port=ACTUATOR_PORT, host_ip=HOST_IP
+    )
     yield
 
 
