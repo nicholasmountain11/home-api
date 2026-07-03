@@ -13,7 +13,8 @@ sensor_service: ConnectionService
 
 SENSOR_PORT = int(os.environ["SENSOR_PORT"])
 ACTUATOR_PORT = int(os.environ["ACTUATOR_PORT"])
-HOST_IP = os.environ["LOCAL_HOST"]
+HOST_MODE = os.environ.get("HOST_MODE", "local")
+HOST_IP = os.environ["LOCAL_IP"] if HOST_MODE == "network" else os.environ["LOCAL_HOST"]
 
 
 @asynccontextmanager
