@@ -8,4 +8,9 @@ services:
     volumes:
       - ..:/workspace
 
+    ports:
+      - "8000:8000"
+      - "8001:8001"
+      - "8002:8002"
+
     command: /bin/sh -c "while sleep 1000; do :; done"

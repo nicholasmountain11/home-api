@@ -70,3 +70,9 @@ def list_actuators() -> list[str]:
         return connection_service.get_actuator_nickname_list()
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+if __name__ == "__main__":
+    import uvicorn
+
+    uvicorn.run("main:app", host=HOST_IP, port=8000, reload=True)
