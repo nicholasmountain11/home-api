@@ -1,7 +1,20 @@
 import socket
+import sys
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+ip: str
+
+if len(sys.argv) > 1 and sys.argv[1] == "network":
+    ip = os.environ["LOCAL_IP"]
+else:
+    ip = os.environ["LOCAL_HOST"]
+
 
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-client.connect(("127.0.0.1", 8001))
+client.connect(("192.168.1.244", 8001))
 
 
 def write():
